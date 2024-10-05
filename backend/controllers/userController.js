@@ -1,7 +1,8 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import validator from "validator";
 import userModel from "../models/userModel.js";
+
 //login user
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
@@ -22,10 +23,8 @@ const loginUser = async (req, res) => {
         return res.json({ success: true, token, msg: "login success!" })
 
     } catch (error) {
-        return res.json({ success: false, msg: "Some error occured, try again" })
+        return res.json({ success: false, msg: "Some error occurred, try again" })
     }
-
-
 }
 
 const createToken = (id) => {
@@ -54,26 +53,22 @@ const registerUser = async (req, res) => {
 
         //hashing password
         const salt = await bcrypt.genSalt(10);
-        const hassedPassword = await bcrypt.hash(password, salt);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
         const newUser = new userModel({
             name: name,
             email: email,
-            password: hassedPassword,
+            password: hashedPassword,
         })
         //create user
         const user = await newUser.save();
         const token = createToken(user._id);
-
 
         return res.json({ success: true, token, msg: "Successfully registered, please login" })
 
     } catch (error) {
         return res.json({ success: false, msg: "Some error occurs, try again" })
     }
-
-
-
 }
 
 export { loginUser, registerUser };
