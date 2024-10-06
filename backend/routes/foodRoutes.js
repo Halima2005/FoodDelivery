@@ -6,11 +6,13 @@ const foodRouter = express.Router();
 //Image Storage Engine 
 
 const storage= multer.diskStorage({
-    destination:"uploads",
+    destination:(req,file,cb) => {
+        cb(null, '/tmp');//vercel directory
+    },
     filename:(req,file,cb)=>{
-        return cb(null,`${Date.now()}${file.originalname}`)
+        cb(null,Date.now() + path.extname (file.originalname)); //add a unique suffix to the file
     }
-})
+});
 const upload = multer ({storage:storage})
 foodRouter.post("/add",upload.single("image"),addFood)
 foodRouter.get("/list",listFood)
